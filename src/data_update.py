@@ -38,7 +38,7 @@ def one_hot_encoding(df_train, df_valid):
     full_data = pd.concat([df_train[features], df_valid[features]], axis=0)
     ohe.fit(full_data[features])
 
-    x_train = ohe.fit_transform(df_train[features])
-    x_valid = ohe.fit_transform(df_valid[features])
+    x_train = ohe.transform(df_train[features])
+    x_valid = ohe.transform(df_valid[features])
 
     return x_train, x_valid
