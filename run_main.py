@@ -12,7 +12,8 @@ import src.config as sc
 from sklearn import metrics
 from src.create_folds import create_folds_using_kfold
 from src.model_dispatcher import models
-from src.data_update import fill_na_with_none
+from src.data_update import fill_na_with_none, one_hot_encoding
+
 
 def run_output(fold, df):
     """
@@ -26,9 +27,12 @@ def run_output(fold, df):
     Returns:
 
     """
-    fill_na_with_none(df)
-    df_train = df[df['kfold'] != fold].reset_index(drop=True)
-    df_valid = df[df['kfold'] == fold].reset_index(drop=True)
+    df_new = fill_na_with_none(df)
+    df_train = df_new[df_new['kfold'] != fold].reset_index(drop=True)
+    df_valid = df_new[df_new['kfold'] == fold].reset_index(drop=True)
+
+    """Apply one hot encoding to feature matrix"""
+    x_train, x_valid = one_hot_encoding(df_train, df_valid)
 
     """Convert training dataframe to numpy values to use training modules"""
     x_train = df_train.drop('label', axis=1).values

@@ -1,10 +1,11 @@
 """
-This script modules are used to update
-dataframes like filling the NaN values,
-update the data type.
+This script modules are used to update dataframes like
+filling the NaN values, update the data type.
+Also, doing manupulation like one hot encoder.
 """
 
-
+import pandas as pd
+from sklearn import preprocessing
 
 def fill_na_with_none(df):
     """
@@ -20,3 +21,24 @@ def fill_na_with_none(df):
         df.loc[:, feat] = df[feat].astype(str).fillna("NONE")
 
     return df
+
+
+def one_hot_encoding(df_train, df_valid):
+    """
+    Convert the dataframe features into one hot encoding matrix
+
+    Args:
+        df_train: training dataframe
+        df_valid: validation dataframe
+
+    Returns:
+    """
+    ohe = preprocessing.OneHotEncoder()
+    features = [i for i in df_train.columns if i not in ['id', 'target', 'kfold']]
+    full_data = pd.concat([df_train[features], df_valid[features]], axis=0)
+    ohe.fit(full_data[features])
+
+    x_train = ohe.fit_transform(df_train[features])
+    x_valid = ohe.fit_transform(df_valid[features])
+
+    return x_train, x_valid
