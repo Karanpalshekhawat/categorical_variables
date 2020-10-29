@@ -11,7 +11,7 @@ import src.config as sc
 
 from sklearn import metrics
 from src.create_folds import create_folds_using_kfold
-from src.model_dispatcher import models
+from src.model_dispatcher import model
 from src.data_update import fill_na_with_none, one_hot_encoding
 
 
@@ -34,26 +34,22 @@ def run_output(fold, df):
     """Apply one hot encoding to feature matrix"""
     x_train, x_valid = one_hot_encoding(df_train, df_valid)
 
-    """Convert training dataframe to numpy values to use training modules"""
-    x_train = df_train.drop('label', axis=1).values
-    y_train = df_train['label'].values
-
-    """Convert validation dataframe to numpy values for evaluation"""
-    x_valid = df_valid.drop('label', axis=1).values
-    y_valid = df_valid['label'].values
+    """Convert training and validation dataframe target to numpy values for AUC calculation"""
+    y_train = df_train['target'].values
+    y_valid = df_valid['target'].values
 
     """import the model required"""
-    clf = models[model]
+    clf = model
 
     """fit model on the training data"""
     clf.fit(x_train, y_train)
 
-    """predict on validation dataset"""
-    y_pred = clf.predict(x_valid)
+    """As target variable is skewed we will need predicted probabilities to calculate AUC score"""
+    y_pred = clf.predict_proba(x_valid)[:,1]
 
     """find accuracy as distribution of all target variables in similar"""
-    accuracy = metrics.accuracy_score(y_valid, y_pred)
-    print(f"Fold number :{fold}, Accuracy score : {accuracy}")
+    auc = metrics.roc_auc_score(y_valid, y_pred)
+    print(f"Fold number :{fold}, Accuracy score : {auc}")
 
     """Save Model"""
     joblib.dump(clf, os.path.join(sc.OUTPUT_FILE, f'dt_{fold}.bin'))
