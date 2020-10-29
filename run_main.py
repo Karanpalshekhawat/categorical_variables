@@ -12,9 +12,9 @@ import src.config as sc
 from sklearn import metrics
 from src.create_folds import create_folds_using_kfold
 from src.model_dispatcher import models
+from src.data_update import fill_na_with_none
 
-
-def run_output(fold, df, model):
+def run_output(fold, df):
     """
     Structure, train and save the model
     for given fold number.
@@ -22,11 +22,11 @@ def run_output(fold, df, model):
     Args:
         fold (int): number for fold
         df (pd.DataFrame): training dataset
-        model (str): Model to use (either gini or entropy)
 
     Returns:
 
     """
+    fill_na_with_none(df)
     df_train = df[df['kfold'] != fold].reset_index(drop=True)
     df_valid = df[df['kfold'] == fold].reset_index(drop=True)
 
@@ -60,6 +60,5 @@ if __name__ == '__main__':
     """Create a parser object and add variables that you want to declare"""
     parser = argparse.ArgumentParser()
     parser.add_argument('--fold', type=int)
-    parser.add_argument('--model', type=str)
     args = parser.parse_args()
-    run_output(args.fold, df, args.model)
+    run_output(args.fold, df)
