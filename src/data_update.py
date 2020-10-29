@@ -38,6 +38,10 @@ def one_hot_encoding(df_train, df_valid):
     full_data = pd.concat([df_train[features], df_valid[features]], axis=0)
     ohe.fit(full_data[features])
 
+    """ use transform when we have already fit it,use fit_transform which 
+        is a combination of fit and transform together in 1 api, in some 
+        situations you only want to use training data to learn model 
+        parameters and apply the same in test data set also. """
     x_train = ohe.transform(df_train[features])
     x_valid = ohe.transform(df_valid[features])
 

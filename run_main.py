@@ -49,7 +49,7 @@ def run_output(fold, df):
 
     """find accuracy as distribution of all target variables in similar"""
     auc = metrics.roc_auc_score(y_valid, y_pred)
-    print(f"Fold number :{fold}, Accuracy score : {auc}")
+    print(f"Fold number :{fold}, AUC score : {auc}")
 
     """Save Model"""
     joblib.dump(clf, os.path.join(sc.OUTPUT_FILE, f'dt_{fold}.bin'))
